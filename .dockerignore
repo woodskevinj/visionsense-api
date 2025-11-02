@@ -1,1 +1,6 @@
-#
+data/
+logs/
+notebooks/
+venv/
+.git/
+__pycache__/

@@ -1,3 +1,7 @@
+fastapi
+uvicorn
 torch
 torchvision
 pillow
+numpy<2
+python-multipart

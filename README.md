@@ -10,7 +10,8 @@ transfer learning to model serving and containerized deployment on AWS.
 
 ## 🧩 Project Overview
 
-Deploy a containerized API that accepts an image file (`POST /predict`), runs it through a pre-trained deep learning model, and returns the predicted label and confidence score.
+VisionSense API provides a containerized image-classification microservice.
+It accepts an image file (`POST /predict`), runs it through a pretrained ResNet-18 (ImageNet weights), and returns the top-5 predicted labels and confidence scores.
 
 ---
 
@@ -80,11 +81,13 @@ Expected JSON response:
 
 ```json
 {
-  "top1_prediction": { "label": "cat", "confidence": 0.8723 },
-  "top3_predictions": [
-    { "label": "cat", "confidence": 0.8723 },
-    { "label": "dog", "confidence": 0.0671 },
-    { "label": "deer", "confidence": 0.0339 }
+  "success": true,
+  "results": [
+    { "label": "golden retriever", "confidence": 0.9853 },
+    { "label": "Labrador retriever", "confidence": 0.0094 },
+    { "label": "cocker spaniel", "confidence": 0.0021 },
+    { "label": "kuvasz", "confidence": 0.0013 },
+    { "label": "flat-coated retriever", "confidence": 0.0011 }
   ]
 }
 ```
@@ -95,17 +98,15 @@ Expected JSON response:
 
 This project highlights core concepts required of an Applied ML Engineer:
 
-- 🧩 Convolutional Neural Networks (CNNs) — for visual pattern extraction
+- 🧩 Convolutional Neural Networks (CNNs) — visual feature extraction
 
-- 🔁 Transfer Learning — adapting pretrained ResNet18 to CIFAR-10
+- 🔁 Transfer Learning — using pretrained ImageNet models
 
-- 📈 Model Evaluation — training/validation loss tracking
+- ⚙️ Model Serving — building a real-time inference API
 
-- ⚙️ Model Serving — running inference via FastAPI
+- 🐳 Containerization — reproducible, portable environments
 
-- 🐳 Containerization — reproducible, portable environments for deployment
-
-- ☁️ AWS Integration (Optional) — deploying via ECS with Docker and ECR
+- ☁️ AWS Integration (optional) — ECS/ECR deployment workflow
 
 ---
 
@@ -118,6 +119,10 @@ This project highlights core concepts required of an Applied ML Engineer:
 | /health  | GET    | Quick system health and model readiness check                            |
 | /info    | GET    | View model metadata (architecture, parameters, size, etc.)               |
 | /        | GET    | Welcome message and API overview                                         |
+
+Swagger UI: http://127.0.0.1:8000/docs
+
+ReDoc UI: http://127.0.0.1:8000/redoc
 
 ---
 
@@ -135,11 +140,13 @@ Run Container
 docker run -p 8000:8000 visionsense-api
 ```
 
-- Verify it’s running:
+Verify
 
 ```bash
 docker ps
 ```
+
+- Example
 
 ```nginx
 CONTAINER ID   IMAGE              COMMAND                  STATUS         PORTS                    NAMES
@@ -179,34 +186,49 @@ logs/
 notebooks/.ipynb_checkpoints/
 venv/
 .git/
+__pycache__/
 ```
 
 ---
 
 ## 📊 Current Progress
 
-| Phase                                | Description                               | Status  |
-| ------------------------------------ | ----------------------------------------- | ------- |
-| **Data Exploration & Preprocessing** | CIFAR-10 dataset setup and visualization  | 🔜 Next |
-| **Model Training (ResNet18)**        | Fine-tuning pretrained CNNon CIFAR-10     | 🔜 Next |
-| **API Development**                  | FastAPI app + model inference integration | 🔜 Next |
-| **Logging & Health Monitoring**      | Logs, /health, /info endpoints added      | 🔜 Next |
-| **Containerization (Docker)**        | Docker build + run configuration          | 🔜 Next |
-| **Cloud Deployment (AWS ECS)**       | Push image to ECR and deploy              | 🔜 Next |
+| Phase                           | Description                                             | Status       |
+| ------------------------------- | ------------------------------------------------------- | ------------ |
+| **Base Model Setup**            | ResNet-18 pretrained ImageNet model loaded successfully | ✅ Completed |
+| **FastAPI Inference API**       | `/predict` endpoint serving live predictions            | ✅ Completed |
+| **Logging & Health Monitoring** | Logs, /health, /info endpoints added                    | 🔜 Next      |
+| **Docker Containerization**     | Local container build and test                          | 🔜 Next      |
+| **Fine-Tuning Pipeline**        | Adapt ResNet-18 for CIFAR-10 / custom dataset           | 🔜 Next      |
+| **AWS Deployment**              | Push image to ECR and deploy on ECS                     | 🔜 Upcoming  |
+
+---
+
+## 🔁 Transfer Learning (Fine-Tuning)
+
+The next milestone introduces **fine-tuning**, where we adapt the pretrained ResNet-18 to a smaller custom dataset (e.g., **CIFAR-10**).
+
+This involves:
+
+1. Replacing the final classification layer (fc) with a new one for custom labels.
+
+2. Training on the new dataset while keeping earlier convolutional layers frozen or partially trainable.
+
+3. Saving and serving the fine-tuned model through this same API.
 
 ---
 
 ## 📅 Roadmap
 
-- [ ] Complete EDA and preprocessing
-
-- [ ] Train and save fine-tuned ResNet18 model
-
-- [ ] Integrate inference into FastAPI /predict route
-
-- [ ] Add logging, /logs, /health, and /info endpoints
+- [x] Implement pretrained ResNet-18 inference API
 
 - [ ] Containerize with Docker
+
+- [ ] Fine-tune on CIFAR-10
+
+- [ ] Save and load fine-tuned model for inference
+
+- [ ] Add logging, /logs, /health, and /info endpoints
 
 - [ ] Deploy to AWS ECS
 
@@ -214,10 +236,11 @@ venv/
 
 ## ☁️ Deployment Status
 
-- ✅ Dockerized successfully using a multi-stage build (~1 GB final image)
-- ⚙️ AWS ECR upload attempted — image too large for current bandwidth limits
-- 🧩 Next iteration: optimize dependency footprint (use `torch-cpu`, lighter base image)
-- 🚀 ECS deployment workflow will follow in the next phase
+- ✅ Docker image builds successfully (~1 GB)
+
+- 🧩 ECR/ECS deployment planned
+
+- ⚙️ Next optimization: use torch-cpu and lighter base image for faster upload
 
 ---
 
