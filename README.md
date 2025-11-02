@@ -29,7 +29,7 @@ Deploy a containerized API that accepts an image file (`POST /predict`), runs it
 
 ## 📂 Project Structure
 
-```
+```css
 visionsense-api/
 ├── app.py
 ├── src/
