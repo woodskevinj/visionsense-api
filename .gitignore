@@ -1,1 +1,49 @@
-#
+# -----------------------
+# 🧠 Python / PyTorch
+# -----------------------
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+*.egg
+.DS_Store
+
+# -----------------------
+# 🧰 Virtual Environments
+# -----------------------
+venv/
+.env/
+.venv/
+
+# -----------------------
+# 🧩 Jupyter / Notebooks
+# -----------------------
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# -----------------------
+# 🧾 Logs & Caches
+# -----------------------
+logs/
+*.log
+*.out
+*.tmp
+.cache/
+.history
+.prof
+
+# -----------------------
+# 📦 Data & Models
+# -----------------------
+data/
+models/
+checkpoints/
+training_history.json
+*.pth
+
+# -----------------------
+# 🐳 Docker / Build Artifacts
+# -----------------------
+Dockerfile~

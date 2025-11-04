@@ -1,7 +1,8 @@
 import torch
+import torch.nn as nn
 from torchvision.models import resnet18, ResNet18_Weights
 import torchvision.transforms as transforms
-from torchvision import models
+# from torchvision import models
 from PIL import Image
 import json
 import os
