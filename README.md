@@ -188,6 +188,56 @@ __pycache__/
 
 ---
 
+## ☁️ AWS ECR Deployment & Cleanup
+
+<details>
+<summary><b>Push Container to AWS ECR</b></summary>
+
+```bash
+# 1️⃣ Create repository (only once)
+aws ecr create-repository --repository-name visionsense-api --region us-east-1
+
+# 2️⃣ Authenticate Docker to ECR
+aws ecr get-login-password --region us-east-1 \
+  | docker login --username AWS --password-stdin <aws_account_id>.dkr.ecr.us-east-1.amazonaws.com
+
+# 3️⃣ Tag image
+docker tag visionsense-api:latest <aws_account_id>.dkr.ecr.us-east-1.amazonaws.com/visionsense-api:latest
+
+# 4️⃣ Push to ECR
+docker push <aws_account_id>.dkr.ecr.us-east-1.amazonaws.com/visionsense-api:latest
+```
+
+</details>
+
+---
+
+<details>
+<summary><b>Clean Up Resources to Avoid Charges</b></summary>
+
+```bash
+# 🧹 Delete image from ECR
+aws ecr batch-delete-image \
+  --repository-name visionsense-api \
+  --image-ids imageTag=latest \
+  --region us-east-1
+
+# 🧼 Remove local image
+docker rmi visionsense-api
+
+# 🧾 Optional: Delete repository (only if no longer needed)
+aws ecr delete-repository \
+  --repository-name visionsense-api \
+  --region us-east-1 \
+  --force
+```
+
+✅ Note: Keeping an empty repository incurs **no cost**.
+
+</details>
+
+---
+
 ## 📊 Current Progress
 
 | Phase                           | Description                                             | Status       |
