@@ -48,12 +48,11 @@ visionsense-api/
 
 ## 🚀 Getting Started
 
-````bash
-# 1️⃣ Clone the repository
 ```bash
+# 1️⃣ Clone the repository
 git clone https://github.com/woodskevinj/visionsense-api.git
 cd visionsense-api
-````
+```
 
 # 2️⃣ Install dependencies
 
@@ -69,13 +68,11 @@ uvicorn api.app:app --reload
 
 # 4️⃣ Test the /predict endpoint
 
-````
-
 Send an image file for inference:
 
 ```bash
 curl -X POST -F "file=@test.jpg" http://127.0.0.1:8000/predict
-````
+```
 
 Expected JSON response:
 
