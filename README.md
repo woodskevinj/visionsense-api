@@ -34,7 +34,7 @@ visionsense-api/
 ├── app.py
 ├── src/
 │   ├── __init__.py
-│   ├── classifier.py       # Inference logic (ImageNet or fine-tuned CIFAR-10)
+│   ├── classifier.py          # Inference logic (ImageNet or fine-tuned CIFAR-10)
 │   └── train_finetune.py      # Fine-tuning script for ResNet-18
 ├── requirements.txt
 ├── README.md
