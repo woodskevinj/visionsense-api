@@ -2,29 +2,28 @@
 # 🖼️ Vision Sense API
 
 End-to-end deep learning project for image classification — built and deployed using
-PyTorch and FastAPI.
+**PyTorch** and **FastAPI**.
 
-This project demonstrates the full applied ML lifecycle from data exploration and
-transfer learning to model serving and containerized deployment on AWS.
+This project demonstrates the full applied ML lifecycle — from leveraging pretrained vision models and fine-tuning to model serving, containerization, and eventual deployment on AWS.
 ---
 
 ## 🧩 Project Overview
 
-VisionSense API provides a containerized image-classification microservice.
-It accepts an image file (`POST /predict`), runs it through a pretrained ResNet-18 (ImageNet weights), and returns the top-5 predicted labels and confidence scores.
+VisionSense API provides a **containerized image-classification microservice**.
+It accepts an image file (`POST /predict`), runs it through a ResNet-18 (ImageNet pretrained or fine-tuned on CIFAR-10), and returns the **top-5 predicted labels with confidence scores**.
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Component            | Purpose                                  |
-| -------------------- | ---------------------------------------- |
-| **Framework**        | FastAPI                                  |
-| **Model**            | TorchVision ResNet-50 (ImageNet weights) |
-| **Image Handling**   | Pillow                                   |
-| **Serving**          | Uvicorn                                  |
-| **Containerization** | Docker (multi-stage build)               |
-| **Optional**         | AWS ECS / App Runner deployment later    |
+| Component            | Purpose                                      |
+| -------------------- | -------------------------------------------- |
+| **Framework**        | FastAPI (serving and API documentation)      |
+| **Model**            | TorchVision ResNet-50 (ImageNet or CIFAR-10) |
+| **Image Handling**   | Pillow                                       |
+| **Serving**          | Uvicorn                                      |
+| **Containerization** | Docker (multi-stage build)                   |
+| **Optional**         | AWS ECS / App Runner deployment later        |
 
 ---
 
@@ -35,7 +34,8 @@ visionsense-api/
 ├── app.py
 ├── src/
 │   ├── __init__.py
-│   └── classifier.py
+│   ├── classifier.py       # Inference logic (ImageNet or fine-tuned CIFAR-10)
+│   └── train_finetune.py      # Fine-tuning script for ResNet-18
 ├── requirements.txt
 ├── README.md
 ├── Dockerfile
@@ -83,11 +83,11 @@ Expected JSON response:
 {
   "success": true,
   "results": [
-    { "label": "golden retriever", "confidence": 0.9853 },
-    { "label": "Labrador retriever", "confidence": 0.0094 },
-    { "label": "cocker spaniel", "confidence": 0.0021 },
-    { "label": "kuvasz", "confidence": 0.0013 },
-    { "label": "flat-coated retriever", "confidence": 0.0011 }
+    { "label": "dog", "confidence": 0.9853 },
+    { "label": "cat", "confidence": 0.0094 },
+    { "label": "frog", "confidence": 0.0021 },
+    { "label": "deer", "confidence": 0.0013 },
+    { "label": "horse", "confidence": 0.0011 }
   ]
 }
 ```
@@ -100,9 +100,9 @@ This project highlights core concepts required of an Applied ML Engineer:
 
 - 🧩 Convolutional Neural Networks (CNNs) — visual feature extraction
 
-- 🔁 Transfer Learning — using pretrained ImageNet models
+- 🔁 Transfer Learning — adapting pretrained models to new datasets (CIFAR-10)
 
-- ⚙️ Model Serving — building a real-time inference API
+- ⚙️ Model Serving — real-time inference via FastAPI
 
 - 🐳 Containerization — reproducible, portable environments
 
@@ -197,24 +197,27 @@ __pycache__/
 | ------------------------------- | ------------------------------------------------------- | ------------ |
 | **Base Model Setup**            | ResNet-18 pretrained ImageNet model loaded successfully | ✅ Completed |
 | **FastAPI Inference API**       | `/predict` endpoint serving live predictions            | ✅ Completed |
+| **Fine-Tuning Pipeline**        | ResNet-18 fine-tuned on CIFAR-10                        | ✅ Completed |
+| **Integration**                 | Fine-tuned weights loaded dynamically in classifier     | ✅ Completed |
 | **Logging & Health Monitoring** | Logs, /health, /info endpoints added                    | 🔜 Next      |
 | **Docker Containerization**     | Local container build and test                          | 🔜 Next      |
-| **Fine-Tuning Pipeline**        | Adapt ResNet-18 for CIFAR-10 / custom dataset           | 🔜 Next      |
 | **AWS Deployment**              | Push image to ECR and deploy on ECS                     | 🔜 Upcoming  |
 
 ---
 
 ## 🔁 Transfer Learning (Fine-Tuning)
 
-The next milestone introduces **fine-tuning**, where we adapt the pretrained ResNet-18 to a smaller custom dataset (e.g., **CIFAR-10**).
+Fine-tuning adapts the pretrained ResNet-18 (ImageNet) to a new, smaller dataset such as CIFAR-10.
 
-This involves:
+**Steps performed in** `src/train_finetune.py`:
 
-1. Replacing the final classification layer (fc) with a new one for custom labels.
+1. Freeze pretrained layers and replace the final fully connected layer (`fc`).
 
-2. Training on the new dataset while keeping earlier convolutional layers frozen or partially trainable.
+2. Train on CIFAR-10 (10 classes).
 
-3. Saving and serving the fine-tuned model through this same API.
+3. Save weights to `models/resnet18_finetuned.pth`.
+
+4. The API automatically detects and loads the fine-tuned model if present.
 
 ---
 
@@ -222,11 +225,11 @@ This involves:
 
 - [x] Implement pretrained ResNet-18 inference API
 
+- [x] Fine-tune ResNet-18 on CIFAR-10
+
+- [x] Integrate fine-tuned model into API
+
 - [ ] Containerize with Docker
-
-- [ ] Fine-tune on CIFAR-10
-
-- [ ] Save and load fine-tuned model for inference
 
 - [ ] Add logging, /logs, /health, and /info endpoints
 
@@ -240,7 +243,7 @@ This involves:
 
 - 🧩 ECR/ECS deployment planned
 
-- ⚙️ Next optimization: use torch-cpu and lighter base image for faster upload
+- ⚙️ Next optimization: use `torch-cpu` and lighter base image for faster upload
 
 ---
 
