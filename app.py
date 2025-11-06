@@ -1,5 +1,7 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, UploadFile, Request
 from fastapi.responses import JSONResponse
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from src.classifier import VisionClassifier
 import shutil
 import tempfile
@@ -11,6 +13,12 @@ app = FastAPI(
     description="Image classification API using a pretrained ResNet model",
     version="1.0.0",
 )
+
+# Mount static directory
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Template engine
+templates = Jinja2Templates(directory="templates")
 
 # ======================================================
 # Logging Setup (add near the top of api/app.py)
@@ -35,6 +43,9 @@ classifier = VisionClassifier()
 def root():
     return {"message": "Welcome to VisionSense API!  Use POST /predict to classify images."}
 
+@app.get("/dashboard")
+def dashboard(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/health")
 def health_check():
