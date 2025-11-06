@@ -5,3 +5,4 @@ torchvision
 pillow
 numpy<2
 python-multipart
+jinja2
