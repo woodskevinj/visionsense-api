@@ -1,14 +1,13 @@
 ---
-# 🖼️ Vision Sense API & Dashboard
+🖼️ Vision Sense API & Dashboard
 
 VisionSense is a complete end-to-end image classification system built using **FastAPI**, **PyTorch**, and **TailwindCSS**.
 
 It includes both a REST API **and** a modern web dashboard for uploading images and viewing predictions.
 
-This project demonstrates the applied ML engineer workflow:
+This project demonstrates the applied ML engineer workflow.
 
 model selection → fine-tuning → API serving → UI → containerization → deployment.
-
 ---
 
 ## 🧩 Project Overview
