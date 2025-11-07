@@ -7,7 +7,7 @@ It includes both a REST API **and** a modern web dashboard for uploading images 
 
 This project demonstrates the applied ML engineer workflow.
 
-model selection → fine-tuning → API serving → UI → containerization → deployment.
+- model selection → fine-tuning → API serving → UI → containerization → deployment.
 ---
 
 ## 🧩 Project Overview
