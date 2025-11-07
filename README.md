@@ -1,5 +1,5 @@
 ---
-🖼️ Vision Sense API & Dashboard
+# 🖼️ Vision Sense API & Dashboard
 
 VisionSense is a complete end-to-end image classification system built using **FastAPI**, **PyTorch**, and **TailwindCSS**.
 
