@@ -15,10 +15,15 @@ model selection → fine-tuning → API serving → UI → containerization → 
 VisionSense API provides:
 
 ✅ /predict API endpoint for image classification
+
 ✅ Tailwind-powered web dashboard at /dashboard
+
 ✅ Real-time top-5 predictions with confidence scores
+
 ✅ Optional fine-tuned model (CIFAR-10)
+
 ✅ Full logging + health checks
+
 ✅ Dockerized microservice ready for AWS deployment
 
 ---
