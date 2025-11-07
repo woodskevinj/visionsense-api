@@ -84,13 +84,14 @@ async def predict(file: UploadFile = File(...)):
         results = classifier.predict(temp_path, top_k=5)
         os.remove(temp_path)
 
-        # log the prediction
         predicted_labels = [r['label'] for r in results]
+
         logging.info(
             f"File: {file.filename} | predictions: {predicted_labels}"
         )
 
         return JSONResponse(content={"success": True, "result": results})
+    
     
     except Exception as e:
         return JSONResponse(
