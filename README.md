@@ -1,29 +1,41 @@
 ---
-# 🖼️ Vision Sense API
+# 🖼️ Vision Sense API & Dashboard
 
-End-to-end deep learning project for image classification — built and deployed using
-**PyTorch** and **FastAPI**.
+VisionSense is a complete end-to-end image classification system built using **FastAPI**, **PyTorch**, and **TailwindCSS**.
 
-This project demonstrates the full applied ML lifecycle — from leveraging pretrained vision models and fine-tuning to model serving, containerization, and eventual deployment on AWS.
+It includes both a REST API **and** a modern web dashboard for uploading images and viewing predictions.
+
+This project demonstrates the applied ML engineer workflow:
+
+model selection → fine-tuning → API serving → UI → containerization → deployment.
+
 ---
 
 ## 🧩 Project Overview
 
-VisionSense API provides a **containerized image-classification microservice**.
-It accepts an image file (`POST /predict`), runs it through a ResNet-18 (ImageNet pretrained or fine-tuned on CIFAR-10), and returns the **top-5 predicted labels with confidence scores**.
+VisionSense API provides:
+
+✅ /predict API endpoint for image classification
+✅ Tailwind-powered web dashboard at /dashboard
+✅ Real-time top-5 predictions with confidence scores
+✅ Optional fine-tuned model (CIFAR-10)
+✅ Full logging + health checks
+✅ Dockerized microservice ready for AWS deployment
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Component            | Purpose                                      |
-| -------------------- | -------------------------------------------- |
-| **Framework**        | FastAPI (serving and API documentation)      |
-| **Model**            | TorchVision ResNet-50 (ImageNet or CIFAR-10) |
-| **Image Handling**   | Pillow                                       |
-| **Serving**          | Uvicorn                                      |
-| **Containerization** | Docker (multi-stage build)                   |
-| **Optional**         | AWS ECS / App Runner deployment later        |
+| Component            | Purpose                               |
+| -------------------- | ------------------------------------- |
+| **FastAPI**          | REST API + HTML template rendering    |
+| **PyTorch**          | Model loading + inference             |
+| **TorchVision**      | Pretrained ResNet18 + transforms      |
+| **TailwindCSS**      | Front-end styling for dashboard UI    |
+| **Uvicorn**          | ASGI server for FastAPI               |
+| **Docker**           | Containerized deployment              |
+| **Python-Multipart** | File upload handling                  |
+| **Optional**         | AWS ECS / App Runner deployment later |
 
 ---
 
@@ -33,11 +45,13 @@ It accepts an image file (`POST /predict`), runs it through a ResNet-18 (ImageNe
 visionsense-api/
 ├── app.py
 ├── src/
-│   ├── __init__.py
-│   ├── classifier.py          # Inference logic (ImageNet or fine-tuned CIFAR-10)
-│   └── train_finetune.py      # Fine-tuning script for ResNet-18
+│   ├── classifier.py
+│   └── train_finetune.py
+├── templates/
+│   └── index.html          # Dashboard UI
+├── static/
+│   └── (optional CSS, images)
 ├── requirements.txt
-├── README.md
 ├── Dockerfile
 ├── .dockerignore
 └── .gitignore
@@ -66,9 +80,13 @@ pip install -r requirements.txt
 uvicorn api.app:app --reload
 ```
 
-# 4️⃣ Test the /predict endpoint
+# 4️⃣ Visit the dashboard
 
-Send an image file for inference:
+👉 http://127.0.0.1:8000/dashboard
+
+Upload an image and see predictions instantly.
+
+# 5️⃣ Test the API directly
 
 ```bash
 curl -X POST -F "file=@test.jpg" http://127.0.0.1:8000/predict
@@ -91,35 +109,43 @@ Expected JSON response:
 
 ---
 
-## 🧠 Learning Focus
+## 🌐 API Endpoints
 
-This project highlights core concepts required of an Applied ML Engineer:
+| Endpoint   | Method | Description                                            |
+| ---------- | ------ | ------------------------------------------------------ |
+| /dashboard | GET    | HTML dashboard UI for uploading and classifying images |
+| /predict   | POST   | Upload image → get top-5 predictions                   |
+| /health    | GET    | Model/API health check (device, model loaded, status)  |
+| /info      | GET    | Model + service metadata                               |
+| /logs      | GET    | Returns recent prediction logs                         |
+| /          | GET    | Welcome message                                        |
 
-- 🧩 Convolutional Neural Networks (CNNs) — visual feature extraction
+[Swagger UI:](http://127.0.0.1:8000/docs)
 
-- 🔁 Transfer Learning — adapting pretrained models to new datasets (CIFAR-10)
-
-- ⚙️ Model Serving — real-time inference via FastAPI
-
-- 🐳 Containerization — reproducible, portable environments
-
-- ☁️ AWS Integration (optional) — ECS/ECR deployment workflow
+[ReDoc UI:](http://127.0.0.1:8000/redoc)
 
 ---
 
-## 🌐 API Endpoints
+## 🧠 Model Options
 
-| Endpoint | Method | Description                                                              |
-| -------- | ------ | ------------------------------------------------------------------------ |
-| /predict | POST   | Upload an image for classification (returns top-1 and top-3 predictions) |
-| /logs    | GET    | Retrieve recent prediction logs (?limit=10)                              |
-| /health  | GET    | Quick system health and model readiness check                            |
-| /info    | GET    | View model metadata (architecture, parameters, size, etc.)               |
-| /        | GET    | Welcome message and API overview                                         |
+# ✅ Default
 
-Swagger UI: http://127.0.0.1:8000/docs
+ResNet-18 pretrained on ImageNet (torchvision.models).
 
-ReDoc UI: http://127.0.0.1:8000/redoc
+# ✅ Fine-Tuned Model Support
+
+If models/resnet18_finetuned.pth exists, the classifier automatically switches to CIFAR-10 labels:
+
+```text
+airplane, automobile, bird, cat, deer,
+dog, frog, horse, ship, truck
+```
+
+Fine-tuning script:
+
+```bash
+python src/train_finetune.py
+```
 
 ---
 
@@ -151,40 +177,9 @@ xxxxxx         visionsense-api   "uvicorn app:app --h…"   Up 5 seconds   0.0.0
 
 ```
 
-### 🌐 Test the API
+Then open:
 
-```arduino
-http://127.0.0.1:8000/health
-http://127.0.0.1:8000/logs
-```
-
-You should see:
-
-```json
-{
-  "status": "healthy",
-  "model_loaded": true,
-  "device": "cpu",
-  "message": "API and model are ready for inference."
-}
-```
-
----
-
-## 🧱 Docker Ignore Setup
-
-.dockerignore ensures that unnecessary local files (data, logs, checkpoints, etc.) are excluded from Docker builds for a small and efficient image.
-
-Example included in repo:
-
-```bash
-data/
-logs/
-notebooks/.ipynb_checkpoints/
-venv/
-.git/
-__pycache__/
-```
+👉 [http://127.0.0.1:8000/dashboard](http://127.0.0.1:8000/dashboard)
 
 ---
 
@@ -240,15 +235,15 @@ aws ecr delete-repository \
 
 ## 📊 Current Progress
 
-| Phase                           | Description                                             | Status       |
-| ------------------------------- | ------------------------------------------------------- | ------------ |
-| **Base Model Setup**            | ResNet-18 pretrained ImageNet model loaded successfully | ✅ Completed |
-| **FastAPI Inference API**       | `/predict` endpoint serving live predictions            | ✅ Completed |
-| **Fine-Tuning Pipeline**        | ResNet-18 fine-tuned on CIFAR-10                        | ✅ Completed |
-| **Integration**                 | Fine-tuned weights loaded dynamically in classifier     | ✅ Completed |
-| **Logging & Health Monitoring** | Logs, /health, /info endpoints added                    | 🔜 Next      |
-| **Docker Containerization**     | Local container build and test                          | 🔜 Next      |
-| **AWS Deployment**              | Push image to ECR and deploy on ECS                     | 🔜 Upcoming  |
+| Phase                              | Status      |
+| ---------------------------------- | ----------- |
+| **Pretrained ResNet18 Inference**  | ✅ Done     |
+| **FastAPI Backend API**            | ✅ Done     |
+| **Dashboard UI (Tailwind + HTML)** | ✅ Done     |
+| **Logging + Health Endpoints**     | ✅ Done     |
+| **CIFAR-10 Fine-Tuning Pipeline**  | ✅ Done     |
+| **Dockerization**                  | ✅ Done     |
+| **AWS Deployment(ECR/ECS)**        | 🔜 Upcoming |
 
 ---
 
@@ -268,40 +263,22 @@ Fine-tuning adapts the pretrained ResNet-18 (ImageNet) to a new, smaller dataset
 
 ---
 
-## 📅 Roadmap
+## ☁️ Deployment Notes
 
-- [x] Implement pretrained ResNet-18 inference API
+- Image builds ~1 GB with default PyTorch
 
-- [x] Fine-tune ResNet-18 on CIFAR-10
+- Can shrink using CPU-only wheels (torch==x.x.x+cpu)
 
-- [x] Integrate fine-tuned model into API
-
-- [ ] Containerize with Docker
-
-- [ ] Add logging, /logs, /health, and /info endpoints
-
-- [ ] Deploy to AWS ECS
-
----
-
-## ☁️ Deployment Status
-
-- ✅ Docker image builds successfully (~1 GB)
-
-- 🧩 ECR/ECS deployment planned
-
-- ⚙️ Next optimization: use `torch-cpu` and lighter base image for faster upload
-
----
-
-## 💡 Developer Note
-
-- TBD
+- Works cleanly on ECS, App Runner, or EC2
 
 ---
 
 👨‍💻 Author
 
-- Kevin Woods
-- Applied ML Engineer | AWS Certified AI Practitioner | AWS Machine Learning Certified Engineer – Associate
-- 🔗 GitHub: woodskevinj
+# Kevin Woods
+
+Applied ML Engineer
+AWS Certified AI Practitioner
+AWS Machine Learning Certified Engineer – Associate
+
+- 🔗 [GitHub: woodskevinj](https://github.com/woodskevinj)
