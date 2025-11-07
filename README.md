@@ -124,9 +124,9 @@ Expected JSON response:
 | /logs      | GET    | Returns recent prediction logs                         |
 | /          | GET    | Welcome message                                        |
 
-[Swagger UI:](http://127.0.0.1:8000/docs)
+Swagger UI: http://127.0.0.1:8000/docs
 
-[ReDoc UI:](http://127.0.0.1:8000/redoc)
+ReDoc UI: http://127.0.0.1:8000/redoc
 
 ---
 
@@ -183,7 +183,7 @@ xxxxxx         visionsense-api   "uvicorn app:app --h…"   Up 5 seconds   0.0.0
 
 Then open:
 
-👉 [http://127.0.0.1:8000/dashboard](http://127.0.0.1:8000/dashboard)
+👉 http://127.0.0.1:8000/dashboard
 
 ---
 
@@ -282,7 +282,9 @@ Fine-tuning adapts the pretrained ResNet-18 (ImageNet) to a new, smaller dataset
 # Kevin Woods
 
 Applied ML Engineer
+
 AWS Certified AI Practitioner
+
 AWS Machine Learning Certified Engineer – Associate
 
 - 🔗 [GitHub: woodskevinj](https://github.com/woodskevinj)
